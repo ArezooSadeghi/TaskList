@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".controller.fragment.TaskInformationFragment">
+    <EditText
+        android:id="@+id/txt_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Username"
+        android:ems="10"
+        android:inputType="text"/>
+    <EditText
+        android:id="@+id/txt_numberoftask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="NumberOfTask"
+        android:ems="10"
+        android:inputType="number"/>
+    <Button
+        android:id="@+id/btn_build"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Build"
+        android:textSize="24sp"
+        android:textAllCaps="false"
+        android:layout_marginTop="50dp"/>
+</LinearLayout>
