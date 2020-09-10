@@ -9,27 +9,45 @@ import java.util.UUID;
 
 public class TaskRepository implements IRepository {
     private static TaskRepository sInstance;
+    private static String sUserName;
+    private static int sNumberOfTask;
     private List<Task> mTasks;
 
-    private TaskRepository(String userName, int numberOfTask) {
+    private TaskRepository() {
         mTasks = new ArrayList<>();
-        for (int i = 0; i < numberOfTask; i++) {
+        for (int i = 0; i < sNumberOfTask; i++) {
             Task task = new Task();
-            task.setName(userName);
+            task.setName(sUserName);
             task.setState(State.getRandomTaskState());
             mTasks.add(task);
         }
     }
 
-    public static TaskRepository getInstance(String userName, int numberOfTask) {
+    public static TaskRepository getInstance() {
         if (sInstance == null) {
-            sInstance = new TaskRepository(userName, numberOfTask);
+            sInstance = new TaskRepository();
         }
         return sInstance;
     }
 
     public List<Task> getTasks() {
         return mTasks;
+    }
+
+    public static String getUserName() {
+        return sUserName;
+    }
+
+    public static int getNumberOfTask() {
+        return sNumberOfTask;
+    }
+
+    public static void setUserName(String userName) {
+        sUserName = userName;
+    }
+
+    public static void setNumberOfTask(int numberOfTask) {
+        sNumberOfTask = numberOfTask;
     }
 
     public void setTasks(List<Task> tasks) {

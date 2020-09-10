@@ -13,15 +13,13 @@ import android.widget.EditText;
 
 import com.example.tasklist.R;
 import com.example.tasklist.controller.activity.TaskListActivity;
+import com.example.tasklist.repository.IRepository;
 import com.example.tasklist.repository.TaskRepository;
 
 public class StartPageFragment extends Fragment {
 
     private EditText mEditTextUsername, mEditTextNumberOfTask;
     private Button mButtonBuild;
-
-    public static final String EXTRA_USERNAME = "com.example.tasklist.controller.fragment.EXTRA_USERNAME";
-    public static final String EXTRA_NUMBER_OF_TASK = "com.example.tasklist.controller.fragment.EXTRA_NUMBER_OF_TASK";
 
     public StartPageFragment() {
     }
@@ -52,7 +50,8 @@ public class StartPageFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 int numberOfTask = Integer.parseInt(mEditTextNumberOfTask.getText().toString());
-                Intent intent = TaskListActivity.newIntent(getActivity(), mEditTextUsername.getText().toString(), numberOfTask);
+                Intent intent = TaskListActivity.newIntent(getActivity(), mEditTextUsername
+                        .getText().toString(), numberOfTask);
                 startActivity(intent);
             }
         });

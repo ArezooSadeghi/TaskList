@@ -16,16 +16,22 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.tasklist.R;
+import com.example.tasklist.controller.activity.AddTaskActivity;
 import com.example.tasklist.model.State;
 import com.example.tasklist.model.Task;
+import com.example.tasklist.repository.IRepository;
 import com.example.tasklist.repository.TaskRepository;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 public class TaskListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private TaskRepository mTaskRepository;
+    private IRepository mTaskRepository;
+    private TaskAdapter mTaskAdapter;
+    private FloatingActionButton mActionButtonAddNewTask;
     public static final String ARGS_USER_NAME = "username";
     public static final String ARGS_NUMBER_OF_TASK = "numberoftask";
 
@@ -47,8 +53,8 @@ public class TaskListFragment extends Fragment {
 
         String userName = getArguments().getString(ARGS_USER_NAME);
         int numberOfTask = getArguments().getInt(ARGS_NUMBER_OF_TASK);
-        mTaskRepository = TaskRepository.getInstance(userName, numberOfTask);
-
+        TaskRepository.setUserName(userName);
+        TaskRepository.setNumberOfTask(numberOfTask);
 
     }
 
@@ -59,26 +65,51 @@ public class TaskListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
         findViews(view);
         initViews();
+        setListeners();
         return view;
+    }
+
+    private void setListeners() {
+        mActionButtonAddNewTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AddTaskActivity.newIntent(getActivity());
+                startActivity(intent);
+            }
+        });
     }
 
     private void initViews() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        updateUI();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    private void updateUI() {
+        mTaskRepository = TaskRepository.getInstance();
         List<Task> tasks = mTaskRepository.getTasks();
-        TaskAdapter taskAdapter = new TaskAdapter(tasks);
-        mRecyclerView.setAdapter(taskAdapter);
+        if (mTaskAdapter == null) {
+            mTaskAdapter = new TaskAdapter(tasks);
+            mRecyclerView.setAdapter(mTaskAdapter);
+        } else {
+            mTaskAdapter.notifyDataSetChanged();
+        }
     }
 
     private void findViews(View view) {
         mRecyclerView = view.findViewById(R.id.tasklist_recyclerview);
+        mActionButtonAddNewTask = view.findViewById(R.id.fabadd);
     }
 
     public class TaskHolder extends RecyclerView.ViewHolder {
 
         private TextView mTextViewTaskName;
-
         private CheckBox mCheckBoxDone, mCheckBoxDoing, mCheckBoxTodo;
-
         private Task mTask;
 
         public TaskHolder(@NonNull View itemView) {
