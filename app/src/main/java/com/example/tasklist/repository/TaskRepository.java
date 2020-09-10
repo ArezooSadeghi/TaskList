@@ -1,57 +1,29 @@
 package com.example.tasklist.repository;
 
-import com.example.tasklist.controller.fragment.TaskListFragment;
 import com.example.tasklist.model.State;
 import com.example.tasklist.model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
-public class TaskRepository {
+public class TaskRepository implements IRepository {
     private static TaskRepository sInstance;
     private List<Task> mTasks;
-    private static String mName;
-    private static int mNumber;
 
-    public static String getmName() {
-        return mName;
-    }
-
-    public static void setmName(String mName) {
-        TaskRepository.mName = mName;
-    }
-
-    public static int getmNumber() {
-        return mNumber;
-    }
-
-    public static void setmNumber(int mNumber) {
-        TaskRepository.mNumber = mNumber;
-    }
-
-    private TaskRepository() {
+    private TaskRepository(String userName, int numberOfTask) {
         mTasks = new ArrayList<>();
-        for (int i = 0; i < getmNumber(); i++) {
+        for (int i = 0; i < numberOfTask; i++) {
             Task task = new Task();
-            task.setName(getmName());
-            State state = State.getRandomTaskState();
-            if (state == State.DONE) {
-                task.setDone(true);
-            } else if (state == State.DOING) {
-                task.setDoing(true);
-            } else {
-                task.setTodo(true);
-            }
-            task.setState(state);
+            task.setName(userName);
+            task.setState(State.getRandomTaskState());
             mTasks.add(task);
         }
     }
 
-    public static TaskRepository getInstance() {
+    public static TaskRepository getInstance(String userName, int numberOfTask) {
         if (sInstance == null) {
-            sInstance = new TaskRepository();
+            sInstance = new TaskRepository(userName, numberOfTask);
         }
         return sInstance;
     }
@@ -62,11 +34,6 @@ public class TaskRepository {
 
     public void setTasks(List<Task> tasks) {
         mTasks = tasks;
-    }
-
-    public static void setUsername(String name) {
-
-
     }
 
     public void create(Task task) {
@@ -83,11 +50,18 @@ public class TaskRepository {
     }
 
     public void update(Task task) {
-        //todo
+        Task findTask = read(task.getId());
+        findTask.setName(task.getName());
+        findTask.setState(task.getState());
     }
 
     public void delete(Task task) {
-        mTasks.remove(task);
+        for (int i = 0; i < mTasks.size(); i++) {
+            if (mTasks.get(i).getId().equals(task.getId())) {
+                mTasks.remove(task);
+                return;
+            }
+        }
     }
 
 }

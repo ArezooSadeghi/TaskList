@@ -15,16 +15,22 @@ import com.example.tasklist.R;
 import com.example.tasklist.controller.activity.TaskListActivity;
 import com.example.tasklist.repository.TaskRepository;
 
-public class TaskInformationFragment extends Fragment {
+public class StartPageFragment extends Fragment {
 
     private EditText mEditTextUsername, mEditTextNumberOfTask;
-
     private Button mButtonBuild;
 
     public static final String EXTRA_USERNAME = "com.example.tasklist.controller.fragment.EXTRA_USERNAME";
     public static final String EXTRA_NUMBER_OF_TASK = "com.example.tasklist.controller.fragment.EXTRA_NUMBER_OF_TASK";
 
-    public TaskInformationFragment() {
+    public StartPageFragment() {
+    }
+
+    public static StartPageFragment newInstance() {
+        Bundle args = new Bundle();
+        StartPageFragment startPageFragment = new StartPageFragment();
+        startPageFragment.setArguments(args);
+        return startPageFragment;
     }
 
     @Override
@@ -35,12 +41,9 @@ public class TaskInformationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_task_information, container, false);
+        View view = inflater.inflate(R.layout.fagment_start_page, container, false);
         findViews(view);
-
         setListeners();
-
         return view;
     }
 
@@ -48,11 +51,8 @@ public class TaskInformationFragment extends Fragment {
         mButtonBuild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TaskRepository.setmName(mEditTextUsername.getText().toString());
-                TaskRepository.setmNumber(Integer.parseInt(mEditTextNumberOfTask.getText().toString()));
-                Intent intent = new Intent(getActivity(), TaskListActivity.class);
-                intent.putExtra(EXTRA_USERNAME, mEditTextUsername.getText().toString());
-                intent.putExtra(EXTRA_NUMBER_OF_TASK, mEditTextNumberOfTask.getText().toString());
+                int numberOfTask = Integer.parseInt(mEditTextNumberOfTask.getText().toString());
+                Intent intent = TaskListActivity.newIntent(getActivity(), mEditTextUsername.getText().toString(), numberOfTask);
                 startActivity(intent);
             }
         });

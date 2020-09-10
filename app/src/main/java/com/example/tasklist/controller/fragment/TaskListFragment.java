@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,25 +16,40 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.tasklist.R;
+import com.example.tasklist.model.State;
 import com.example.tasklist.model.Task;
 import com.example.tasklist.repository.TaskRepository;
 
 import java.util.List;
 
 public class TaskListFragment extends Fragment {
+
     private RecyclerView mRecyclerView;
+    private TaskRepository mTaskRepository;
+    public static final String ARGS_USER_NAME = "username";
+    public static final String ARGS_NUMBER_OF_TASK = "numberoftask";
 
     public TaskListFragment() {
+    }
+
+    public static TaskListFragment newInstance(String userName, int numberOfTask) {
+        Bundle args = new Bundle();
+        args.putString(ARGS_USER_NAME, userName);
+        args.putInt(ARGS_NUMBER_OF_TASK, numberOfTask);
+        TaskListFragment taskListFragment = new TaskListFragment();
+        taskListFragment.setArguments(args);
+        return taskListFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getActivity().getIntent();
-        String username = intent.getStringExtra(TaskInformationFragment.EXTRA_USERNAME);
-        String numberOfTask = intent.getStringExtra(TaskInformationFragment.EXTRA_NUMBER_OF_TASK);
-        int number = Integer.parseInt(numberOfTask);
+        String userName = getArguments().getString(ARGS_USER_NAME);
+        int numberOfTask = getArguments().getInt(ARGS_NUMBER_OF_TASK);
+        mTaskRepository = TaskRepository.getInstance(userName, numberOfTask);
+
+
     }
 
     @Override
@@ -50,8 +64,7 @@ public class TaskListFragment extends Fragment {
 
     private void initViews() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        TaskRepository taskRepository = TaskRepository.getInstance();
-        List<Task> tasks = taskRepository.getTasks();
+        List<Task> tasks = mTaskRepository.getTasks();
         TaskAdapter taskAdapter = new TaskAdapter(tasks);
         mRecyclerView.setAdapter(taskAdapter);
     }
@@ -79,9 +92,18 @@ public class TaskListFragment extends Fragment {
         public void bindTask(Task task) {
             mTask = task;
             mTextViewTaskName.setText(task.getName());
-            mCheckBoxDone.setChecked(task.isDone());
-            mCheckBoxDoing.setChecked(task.isDoing());
-            mCheckBoxTodo.setChecked(task.isTodo());
+            State state = mTask.getState();
+            switch (state) {
+                case DONE:
+                    mCheckBoxDone.setChecked(true);
+                    break;
+                case DOING:
+                    mCheckBoxDoing.setChecked(true);
+                    break;
+                default:
+                    mCheckBoxTodo.setChecked(true);
+                    break;
+            }
         }
     }
 
@@ -114,9 +136,9 @@ public class TaskListFragment extends Fragment {
         public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
             Task task = mTasks.get(position);
             if (position % 2 == 0) {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFE4C4"));
+                holder.itemView.setBackgroundColor(Color.parseColor("#FF69B4"));
             } else {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFD700"));
+                holder.itemView.setBackgroundColor(Color.parseColor("#FFC0CB"));
             }
             holder.bindTask(task);
         }
