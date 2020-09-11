@@ -4,18 +4,17 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.TextView;
 
 import com.example.tasklist.R;
 import com.example.tasklist.controller.activity.AddTaskActivity;
@@ -25,15 +24,14 @@ import com.example.tasklist.repository.IRepository;
 import com.example.tasklist.repository.TaskRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 public class TaskListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
+    private FloatingActionButton mActionButtonAddNewTask;
     private IRepository mTaskRepository;
     private TaskAdapter mTaskAdapter;
-    private FloatingActionButton mActionButtonAddNewTask;
     public static final String ARGS_USER_NAME = "username";
     public static final String ARGS_NUMBER_OF_TASK = "numberoftask";
 
@@ -57,7 +55,6 @@ public class TaskListFragment extends Fragment {
         int numberOfTask = getArguments().getInt(ARGS_NUMBER_OF_TASK);
         TaskRepository.setUserName(userName);
         TaskRepository.setNumberOfTask(numberOfTask);
-
     }
 
     @Override
@@ -71,14 +68,15 @@ public class TaskListFragment extends Fragment {
         return view;
     }
 
-    private void setListeners() {
-        mActionButtonAddNewTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = AddTaskActivity.newIntent(getActivity());
-                startActivity(intent);
-            }
-        });
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    private void findViews(View view) {
+        mRecyclerView = view.findViewById(R.id.tasklist_recyclerview);
+        mActionButtonAddNewTask = view.findViewById(R.id.fabadd);
     }
 
     private void initViews() {
@@ -87,12 +85,6 @@ public class TaskListFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
-        updateUI();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         updateUI();
     }
 
@@ -107,9 +99,14 @@ public class TaskListFragment extends Fragment {
         }
     }
 
-    private void findViews(View view) {
-        mRecyclerView = view.findViewById(R.id.tasklist_recyclerview);
-        mActionButtonAddNewTask = view.findViewById(R.id.fabadd);
+    private void setListeners() {
+        mActionButtonAddNewTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AddTaskActivity.newIntent(getActivity());
+                startActivity(intent);
+            }
+        });
     }
 
     public class TaskHolder extends RecyclerView.ViewHolder {
@@ -133,12 +130,18 @@ public class TaskListFragment extends Fragment {
             switch (state) {
                 case DONE:
                     mCheckBoxDone.setChecked(true);
+                    mCheckBoxDoing.setChecked(false);
+                    mCheckBoxTodo.setChecked(false);
                     break;
                 case DOING:
                     mCheckBoxDoing.setChecked(true);
+                    mCheckBoxDone.setChecked(false);
+                    mCheckBoxTodo.setChecked(false);
                     break;
                 default:
                     mCheckBoxTodo.setChecked(true);
+                    mCheckBoxDone.setChecked(false);
+                    mCheckBoxDoing.setChecked(false);
                     break;
             }
         }
@@ -173,9 +176,9 @@ public class TaskListFragment extends Fragment {
         public void onBindViewHolder(@NonNull TaskHolder holder, int position) {
             Task task = mTasks.get(position);
             if (position % 2 == 0) {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FF69B4"));
+                holder.itemView.setBackgroundColor(Color.parseColor("#FFDEAD"));
             } else {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFC0CB"));
+                holder.itemView.setBackgroundColor(Color.parseColor("#FAEBD7"));
             }
             holder.bindTask(task);
         }

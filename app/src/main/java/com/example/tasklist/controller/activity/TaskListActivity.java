@@ -1,12 +1,12 @@
 package com.example.tasklist.controller.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.tasklist.R;
 import com.example.tasklist.controller.fragment.TaskListFragment;
@@ -20,6 +20,7 @@ public class TaskListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
+        setTitle("Tasks");
 
         String userName = getIntent().getStringExtra(EXTRA_USER_NAME);
         int numberOfTask = getIntent().getIntExtra(EXTRA_NUMBER_OF_TASK, 0);

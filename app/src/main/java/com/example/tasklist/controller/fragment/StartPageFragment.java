@@ -2,23 +2,20 @@ package com.example.tasklist.controller.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.tasklist.R;
 import com.example.tasklist.controller.activity.TaskListActivity;
-import com.example.tasklist.repository.IRepository;
-import com.example.tasklist.repository.TaskRepository;
 
 public class StartPageFragment extends Fragment {
 
-    private EditText mEditTextUsername, mEditTextNumberOfTask;
+    private EditText mEditTextUserName, mEditTextNumberOfTask;
     private Button mButtonBuild;
 
     public StartPageFragment() {
@@ -50,7 +47,7 @@ public class StartPageFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 int numberOfTask = Integer.parseInt(mEditTextNumberOfTask.getText().toString());
-                Intent intent = TaskListActivity.newIntent(getActivity(), mEditTextUsername
+                Intent intent = TaskListActivity.newIntent(getActivity(), mEditTextUserName
                         .getText().toString(), numberOfTask);
                 startActivity(intent);
             }
@@ -58,7 +55,7 @@ public class StartPageFragment extends Fragment {
     }
 
     private void findViews(View view) {
-        mEditTextUsername = view.findViewById(R.id.txt_username);
+        mEditTextUserName = view.findViewById(R.id.txt_username);
         mEditTextNumberOfTask = view.findViewById(R.id.txt_numberoftask);
         mButtonBuild = view.findViewById(R.id.btn_build);
     }

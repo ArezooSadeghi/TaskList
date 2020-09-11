@@ -1,24 +1,20 @@
 package com.example.tasklist.controller.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.tasklist.R;
 import com.example.tasklist.model.State;
 import com.example.tasklist.model.Task;
 import com.example.tasklist.repository.IRepository;
 import com.example.tasklist.repository.TaskRepository;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -26,8 +22,10 @@ public class AddTaskFragment extends Fragment {
 
     private EditText mEditTextNameOfTask;
     private CheckBox mCheckBoxDone, mCheckBoxDoing, mCheckBoxTodo;
-    private Task mTask = new Task();
+    private FloatingActionButton mFloatingActionButtonTik;
+    private Task mTask;
     private IRepository mTaskRepository;
+    private List<Task> mTasks;
 
     public AddTaskFragment() {
     }
@@ -54,50 +52,24 @@ public class AddTaskFragment extends Fragment {
     }
 
     private void setListeners() {
-        mEditTextNameOfTask.addTextChangedListener(new TextWatcher() {
+        mFloatingActionButtonTik.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
+            public void onClick(View view) {
+                mTask = new Task();
                 mTask.setName(mEditTextNameOfTask.getText().toString());
+
+                if (mCheckBoxDone.isChecked())
+                    mTask.setState(State.DONE);
+                else if (mCheckBoxDoing.isChecked())
+                    mTask.setState(State.DOING);
+                else
+                    mTask.setState(State.TODO);
+
+                mTaskRepository = TaskRepository.getInstance();
+                mTasks = mTaskRepository.getTasks();
+                mTaskRepository.create(mTask);
             }
         });
-
-        mCheckBoxDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mTask.setState(State.DONE);
-            }
-        });
-
-        mCheckBoxDoing.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mTask.setState(State.DOING);
-            }
-        });
-
-        mCheckBoxTodo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mTask.setState(State.TODO);
-            }
-        });
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mTaskRepository = TaskRepository.getInstance();
-        mTaskRepository.create(mTask);
     }
 
     private void findViews(View view) {
@@ -105,5 +77,6 @@ public class AddTaskFragment extends Fragment {
         mCheckBoxDone = view.findViewById(R.id.chbox_done);
         mCheckBoxDoing = view.findViewById(R.id.chbox_doing);
         mCheckBoxTodo = view.findViewById(R.id.chbox_todo);
+        mFloatingActionButtonTik = view.findViewById(R.id.fabtik);
     }
 }
